@@ -23,19 +23,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.AugmentedFace;
+import com.google.ar.core.Pose;
 import com.google.ar.core.TrackingState;
+import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
+import com.google.ar.sceneform.collision.Box;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.rendering.Texture;
 import com.google.ar.sceneform.ux.AugmentedFaceNode;
+import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.Collection;
@@ -61,6 +70,10 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
   private final HashMap<AugmentedFace, AugmentedFaceNode> faceNodeMap = new HashMap<>();
 
+  private ModelRenderable headRegionsRenderable;
+
+  private boolean isCreate;
+
   @Override
   @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
   // CompletableFuture requires api level 24
@@ -77,7 +90,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
     textView = (TextView) findViewById(R.id.textview1);
     textView.setText("hello");
-
+    isCreate = false;
     // Load the face regions renderable.
     // This is a skinned model that renders 3D objects mapped to the regions of the augmented face.
     ModelRenderable.builder()
@@ -92,6 +105,13 @@ public class AugmentedFacesActivity extends AppCompatActivity {
               modelRenderable.setShadowCaster(false);
               modelRenderable.setShadowReceiver(false);
             });
+    ModelRenderable.builder().setSource(this, R.raw.base)
+            .build()
+            .thenAccept(
+                    modelRenderable -> {
+                        headRegionsRenderable = modelRenderable;
+                    }
+            );
 
     // Load the face mesh texture.
     Texture.builder()
@@ -116,6 +136,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
           Collection<AugmentedFace> faceList =
               sceneView.getSession().getAllTrackables(AugmentedFace.class);
 
+
           // Make new AugmentedFaceNodes for any new faces.
           for (AugmentedFace face : faceList) {
             if (!faceNodeMap.containsKey(face)) {
@@ -123,28 +144,53 @@ public class AugmentedFacesActivity extends AppCompatActivity {
               faceNode.setParent(scene);
               faceNode.setFaceRegionsRenderable(faceRegionsRenderable);
               faceNode.setFaceMeshTexture(faceMeshTexture);
-              FloatBuffer fb = face.getMeshVertices().asReadOnlyBuffer();
-              ShortBuffer sb = face.getMeshTriangleIndices().asReadOnlyBuffer();
-              float[] points;
-              short[] indices;
-              if(fb.hasArray()){
-                points = fb.array();
-              }
-              else {
-                points = new float[fb.limit()];
-                fb.get(points);
-              }
-              if(sb.hasArray()){
-                indices = sb.array();
-              }
-              else {
-                indices = new short[sb.limit()];
-                sb.get(indices);
-              }
-              int pointsize=points.length;
-              int indciesize=indices.length;
-              textView.setText(Integer.toString(pointsize)+"\n"+Integer.toString(indices[0])+Integer.toString(indices[1])+"\n"+Integer.toString(indices[2]));
+
+                AugmentedFaceNode node = new AugmentedFaceNode(face);
+                node.setParent(scene);
+                node.setRenderable(headRegionsRenderable);
+                node.setLocalScale(new Vector3(0.1f,0.1f,0.1f));
+                node.setName("head");
+
+                MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
+                        .thenAccept(
+                                material -> {
+
+                                    Vector3 vector3 = new Vector3(0.05f, 0.05f, 0.05f);
+                                    ModelRenderable model = ShapeFactory.makeCube(vector3,
+                                            Vector3.zero(), material);
+                                    model.setShadowCaster(false);
+                                    model.setShadowReceiver(false);
+
+                                    AugmentedFaceNode transformableNode = new AugmentedFaceNode(face);
+                                    transformableNode.setParent(scene);
+                                    transformableNode.setRenderable(model);
+                                }
+                        );
+
+
+//              FloatBuffer fb = face.getMeshVertices().asReadOnlyBuffer();
+//              ShortBuffer sb = face.getMeshTriangleIndices().asReadOnlyBuffer();
+//              float[] points;
+//              short[] indices;
+//              if(fb.hasArray()){
+//                points = fb.array();
+//              }
+//              else {
+//                points = new float[fb.limit()];
+//                fb.get(points);
+//              }
+//              if(sb.hasArray()){
+//                indices = sb.array();
+//              }
+//              else {
+//                indices = new short[sb.limit()];
+//                sb.get(indices);
+//              }
+//              int pointsize=points.length;
+//              int indciesize=indices.length;
+              //textView.setText(Float.toString(points[42])+"\n"+Float.toString(points[43])+"\n"+Float.toString(points[44])+"\n"+Float.toString(indices[2]));
               faceNodeMap.put(face, faceNode);
+              faceNodeMap.put(face, node);
             }
           }
 
@@ -156,8 +202,15 @@ public class AugmentedFacesActivity extends AppCompatActivity {
             AugmentedFace face = entry.getKey();
             if (face.getTrackingState() == TrackingState.STOPPED) {
               AugmentedFaceNode faceNode = entry.getValue();
+              Log.i("head",faceNode.getName());
               faceNode.setParent(null);
               iter.remove();
+            }
+            else if (face.getTrackingState() == TrackingState.PAUSED) {
+                AugmentedFaceNode faceNode = entry.getValue();
+                Log.i("head",faceNode.getName());
+                faceNode.setParent(null);
+                iter.remove();
             }
           }
         });

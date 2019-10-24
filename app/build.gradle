@@ -60,3 +60,9 @@ sceneform.asset('sampledata/models/fox_face.fbx',
         'sampledata/models/fox_face.sfa',
         'src/main/res/raw/fox_face')
 
+
+
+sceneform.asset('sampledata/models/base.obj',
+        'default',
+        'sampledata/models/base.sfa',
+        'src/main/assets/base')
