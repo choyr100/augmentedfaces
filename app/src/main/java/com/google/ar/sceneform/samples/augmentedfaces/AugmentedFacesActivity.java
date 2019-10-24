@@ -68,7 +68,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
     private TextView textView;
 
-    private final HashMap<AugmentedFace, AugmentedFaceNode> faceNodeMap = new HashMap<>();
+    private final HashMap<AugmentedFaceNode, AugmentedFace> faceNodeMap = new HashMap<>();
 
     private ModelRenderable headRegionsRenderable;
     private ModelRenderable graduationCapRegionsRenderable;
@@ -147,7 +147,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
                     // Make new AugmentedFaceNodes for any new faces.
                     for (AugmentedFace face : faceList) {
-                        if (!faceNodeMap.containsKey(face)) {
+                        if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
                             faceNode.setFaceRegionsRenderable(faceRegionsRenderable);
@@ -163,6 +163,8 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             capNode.setParent(scene);
                             capNode.setRenderable(graduationCapRegionsRenderable);
                             capNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
+
+                            capNode.setName("cap");
 
 //                            MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
 //                                    .thenAccept(
@@ -201,29 +203,34 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 //              int pointsize=points.length;
 //              int indciesize=indices.length;
                             //textView.setText(Float.toString(points[42])+"\n"+Float.toString(points[43])+"\n"+Float.toString(points[44])+"\n"+Float.toString(indices[2]));
-                            faceNodeMap.put(face, faceNode);
-                            faceNodeMap.put(face, node);
-                            faceNodeMap.put(face, capNode);
+                            //faceNodeMap.put(face, faceNode);
+                            faceNodeMap.put(faceNode, face);
+                            faceNodeMap.put(capNode, face);
+                            faceNodeMap.put(node, face);
                         }
                     }
 
                     // Remove any AugmentedFaceNodes associated with an AugmentedFace that stopped tracking.
-                    Iterator<Map.Entry<AugmentedFace, AugmentedFaceNode>> iter =
+                    Iterator<Map.Entry<AugmentedFaceNode, AugmentedFace>> iter =
                             faceNodeMap.entrySet().iterator();
                     while (iter.hasNext()) {
-                        Map.Entry<AugmentedFace, AugmentedFaceNode> entry = iter.next();
-                        AugmentedFace face = entry.getKey();
+                        Map.Entry<AugmentedFaceNode, AugmentedFace> entry = iter.next();
+                        AugmentedFace face = entry.getValue();
                         if (face.getTrackingState() == TrackingState.STOPPED) {
-                            AugmentedFaceNode faceNode = entry.getValue();
-                            Log.i("head",faceNode.getName());
+                            AugmentedFaceNode faceNode = entry.getKey();
+                            Log.i("STOPPED",faceNode.getName());
                             faceNode.setParent(null);
                             iter.remove();
                         }
                         else if (face.getTrackingState() == TrackingState.PAUSED) {
-                            AugmentedFaceNode faceNode = entry.getValue();
-                            Log.i("head",faceNode.getName());
+                            AugmentedFaceNode faceNode = entry.getKey();
+                            Log.i("PAUSED",faceNode.getName());
                             faceNode.setParent(null);
                             iter.remove();
+                        }
+                        else if(face.getTrackingState() == TrackingState.TRACKING){
+                            AugmentedFaceNode faceNode = entry.getKey();
+                            Log.i("TRACKING",faceNode.getName());
                         }
                     }
                 });
