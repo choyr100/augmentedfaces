@@ -71,3 +71,8 @@ sceneform.asset('sampledata/models/graduationcap.obj',
         'default',
         'sampledata/models/graduationcap.sfa',
         'src/main/assets/graduationcap')
+
+sceneform.asset('sampledata/models/untitled.obj',
+        'default',
+        'sampledata/models/untitled.sfa',
+        'src/main/assets/untitled')

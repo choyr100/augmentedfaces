@@ -34,6 +34,7 @@ import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.collision.Box;
+import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.MaterialFactory;
@@ -75,6 +76,8 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
     private boolean isCreate;
 
+    private Quaternion rotationQuaternionY;
+
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     // CompletableFuture requires api level 24
@@ -113,7 +116,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             headRegionsRenderable = modelRenderable;
                         }
                 );
-        ModelRenderable.builder().setSource(this, R.raw.graduationcap)
+        ModelRenderable.builder().setSource(this, R.raw.untitled)
                 .build()
                 .thenAccept(
                         modelRenderable -> {
@@ -123,7 +126,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
         // Load the face mesh texture.
         Texture.builder()
-                .setSource(this, R.drawable.fox_face_mesh_texture)
+                .setSource(this, R.drawable.face_mesh_texture)
                 .build()
                 .thenAccept(texture -> faceMeshTexture = texture);
 
@@ -134,6 +137,8 @@ public class AugmentedFacesActivity extends AppCompatActivity {
         sceneView.setCameraStreamRenderPriority(Renderable.RENDER_PRIORITY_FIRST);
 
         Scene scene = sceneView.getScene();
+
+        rotationQuaternionY = Quaternion.axisAngle(new Vector3(0f, 1f, 0f), 0.5f);
 
         scene.addOnUpdateListener(
                 (FrameTime frameTime) -> {
@@ -150,12 +155,14 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
-                            faceNode.setFaceRegionsRenderable(faceRegionsRenderable);
+                            //faceNode.setFaceRegionsRenderable(faceRegionsRenderable);
                             faceNode.setFaceMeshTexture(faceMeshTexture);
 
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
-                            node.setRenderable(headRegionsRenderable);
+                            node.setFaceRegionsRenderable(headRegionsRenderable);
+
+
                             node.setLocalScale(new Vector3(0.1f,0.1f,0.1f));
                             node.setName("head");
 
@@ -163,7 +170,6 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             capNode.setParent(scene);
                             capNode.setRenderable(graduationCapRegionsRenderable);
                             capNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
-
                             capNode.setName("cap");
 
 //                            MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
@@ -204,7 +210,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 //              int indciesize=indices.length;
                             //textView.setText(Float.toString(points[42])+"\n"+Float.toString(points[43])+"\n"+Float.toString(points[44])+"\n"+Float.toString(indices[2]));
                             //faceNodeMap.put(face, faceNode);
-                            faceNodeMap.put(faceNode, face);
+                            //faceNodeMap.put(faceNode, face);
                             faceNodeMap.put(capNode, face);
                             faceNodeMap.put(node, face);
                         }
@@ -231,6 +237,9 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         else if(face.getTrackingState() == TrackingState.TRACKING){
                             AugmentedFaceNode faceNode = entry.getKey();
                             Log.i("TRACKING",faceNode.getName());
+                            if(faceNode.getName().equals("cap")){
+                                Log.i("cap",faceNode.getName());
+                            }
                         }
                     }
                 });
