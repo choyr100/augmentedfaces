@@ -61,12 +61,6 @@ sceneform.asset('sampledata/models/fox_face.fbx',
         'src/main/res/raw/fox_face')
 
 
-
-sceneform.asset('sampledata/models/base.obj',
-        'default',
-        'sampledata/models/base.sfa',
-        'src/main/assets/base')
-
 sceneform.asset('sampledata/models/graduationcap.obj',
         'default',
         'sampledata/models/graduationcap.sfa',
@@ -76,3 +70,18 @@ sceneform.asset('sampledata/models/untitled.obj',
         'default',
         'sampledata/models/untitled.sfa',
         'src/main/assets/untitled')
+
+sceneform.asset('sampledata/models/base.obj',
+        'sampledata/models/base.mat',
+        'sampledata/models/base.sfa',
+        'src/main/assets/base')
+
+sceneform.asset('sampledata/models/based.obj',
+        'default',
+        'sampledata/models/based.sfa',
+        'src/main/assets/based')
+
+sceneform.asset('sampledata/models/based2.fbx',
+        'default',
+        'sampledata/models/based2.sfa',
+        'src/main/assets/based2')

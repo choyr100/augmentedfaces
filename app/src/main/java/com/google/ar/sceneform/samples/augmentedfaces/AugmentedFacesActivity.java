@@ -32,6 +32,7 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.collision.Box;
 import com.google.ar.sceneform.math.Quaternion;
@@ -51,6 +52,7 @@ import java.nio.ShortBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,14 +111,14 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
                         });
-        ModelRenderable.builder().setSource(this, R.raw.base)
+        ModelRenderable.builder().setSource(this, R.raw.based2)
                 .build()
                 .thenAccept(
                         modelRenderable -> {
                             headRegionsRenderable = modelRenderable;
                         }
                 );
-        ModelRenderable.builder().setSource(this, R.raw.untitled)
+        ModelRenderable.builder().setSource(this, R.raw.graduationcap)
                 .build()
                 .thenAccept(
                         modelRenderable -> {
@@ -138,7 +140,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
         Scene scene = sceneView.getScene();
 
-        rotationQuaternionY = Quaternion.axisAngle(new Vector3(0f, 1f, 0f), 0.5f);
+        rotationQuaternionY = Quaternion.axisAngle(new Vector3(0f, 1f, 0f), 90f);
 
         scene.addOnUpdateListener(
                 (FrameTime frameTime) -> {
@@ -152,24 +154,40 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
                     // Make new AugmentedFaceNodes for any new faces.
                     for (AugmentedFace face : faceList) {
+                        if(face.getTrackingState() == TrackingState.TRACKING){
+                            //face.createAnchor(face.getCenterPose());
+                        }
+                        else if(arFragment.getArSceneView().getArFrame().getCamera().getTrackingState() == TrackingState.STOPPED){
+                            Log.i("STOPPED","STOPPED");
+                        }
+                        else if(arFragment.getArSceneView().getArFrame().getCamera().getTrackingState() == TrackingState.PAUSED){
+                            Log.i("PAUSED","PAUSED");
+                        }
                         if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
-                            //faceNode.setFaceRegionsRenderable(faceRegionsRenderable);
-                            faceNode.setFaceMeshTexture(faceMeshTexture);
+                            faceNode.setLocalScale(new Vector3(0.25f, 0.25f, 0.25f));
 
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
-                            node.setFaceRegionsRenderable(headRegionsRenderable);
 
-
-                            node.setLocalScale(new Vector3(0.1f,0.1f,0.1f));
+                            //node.setFaceMeshTexture(faceMeshTexture);
+                            node.setRenderable(headRegionsRenderable);
+                            node.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
                             node.setName("head");
 
-                            AugmentedFaceNode capNode = new AugmentedFaceNode(face);
-                            capNode.setParent(scene);
+                            TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
+
+                            Pose nosePose = face.getRegionPose(AugmentedFace.RegionType.NOSE_TIP);
+                            TransformableNode node1 = new TransformableNode(arFragment.getTransformationSystem());
+
+
+                            capNode.setParent(faceNode);
+
                             capNode.setRenderable(graduationCapRegionsRenderable);
-                            capNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
+
+                            capNode.setLocalPosition(new Vector3(0f,-0.25f,-0.5f));
+                            capNode.setLocalRotation(rotationQuaternionY);
                             capNode.setName("cap");
 
 //                            MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
@@ -211,7 +229,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             //textView.setText(Float.toString(points[42])+"\n"+Float.toString(points[43])+"\n"+Float.toString(points[44])+"\n"+Float.toString(indices[2]));
                             //faceNodeMap.put(face, faceNode);
                             //faceNodeMap.put(faceNode, face);
-                            faceNodeMap.put(capNode, face);
+                            //faceNodeMap.put(capNode, face);
                             faceNodeMap.put(node, face);
                         }
                     }
@@ -225,6 +243,10 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         if (face.getTrackingState() == TrackingState.STOPPED) {
                             AugmentedFaceNode faceNode = entry.getKey();
                             Log.i("STOPPED",faceNode.getName());
+                            if(faceNode.getChildren() != null){
+                                List<Node> nodeList = faceNode.getChildren();
+                                nodeList.get(0).setParent(null);
+                            }
                             faceNode.setParent(null);
                             iter.remove();
                         }
@@ -239,6 +261,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             Log.i("TRACKING",faceNode.getName());
                             if(faceNode.getName().equals("cap")){
                                 Log.i("cap",faceNode.getName());
+                                //faceNode.setWorldPosition(new Vector3(0f,-1000f,0f));
                             }
                         }
                     }
