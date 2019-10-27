@@ -210,7 +210,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 //              int indciesize=indices.length;
                             //textView.setText(Float.toString(points[42])+"\n"+Float.toString(points[43])+"\n"+Float.toString(points[44])+"\n"+Float.toString(indices[2]));
                             //faceNodeMap.put(face, faceNode);
-                            //faceNodeMap.put(faceNode, face);
+                            faceNodeMap.put(faceNode, face);
                             faceNodeMap.put(capNode, face);
                             faceNodeMap.put(node, face);
                         }
