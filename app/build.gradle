@@ -71,17 +71,18 @@ sceneform.asset('sampledata/models/untitled.obj',
         'sampledata/models/untitled.sfa',
         'src/main/assets/untitled')
 
-sceneform.asset('sampledata/models/base.obj',
-        'sampledata/models/base.mat',
-        'sampledata/models/base.sfa',
-        'src/main/assets/base')
-
-sceneform.asset('sampledata/models/based.obj',
-        'default',
+sceneform.asset('sampledata/models/based.fbx',
+        'sampledata/models/fox_face_material.mat',
         'sampledata/models/based.sfa',
         'src/main/assets/based')
 
-sceneform.asset('sampledata/models/based2.fbx',
+sceneform.asset('sampledata/models/fox_face.fbx',
         'default',
-        'sampledata/models/based2.sfa',
-        'src/main/assets/based2')
+        'sampledata/models/fox_face.sfa',
+        'src/main/assets/fox_face')
+
+
+sceneform.asset('sampledata/models/base.obj',
+        'default',
+        'sampledata/models/base.sfa',
+        'src/main/assets/base')

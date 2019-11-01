@@ -111,7 +111,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
                         });
-        ModelRenderable.builder().setSource(this, R.raw.based2)
+        ModelRenderable.builder().setSource(this, R.raw.base)
                 .build()
                 .thenAccept(
                         modelRenderable -> {
@@ -171,9 +171,9 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
 
-                            //node.setFaceMeshTexture(faceMeshTexture);
-                            node.setRenderable(headRegionsRenderable);
-                            node.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
+                            node.setFaceMeshTexture(faceMeshTexture);
+                            //node.setRenderable(headRegionsRenderable);
+                            //node.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
                             node.setName("head");
 
                             TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
@@ -189,6 +189,11 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             capNode.setLocalPosition(new Vector3(0f,-0.25f,-0.5f));
                             capNode.setLocalRotation(rotationQuaternionY);
                             capNode.setName("cap");
+
+                            AugmentedFaceNode headnode = new AugmentedFaceNode(face);
+                            headnode.setParent(scene);
+                            headnode.setRenderable(headRegionsRenderable);
+                            headnode.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
 
 //                            MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
 //                                    .thenAccept(

@@ -41,7 +41,7 @@
           opacity: null,
         },
       ],
-      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+      source: 'sampledata/models/fox_face_material.mat',
     },
   ],
   model: {
