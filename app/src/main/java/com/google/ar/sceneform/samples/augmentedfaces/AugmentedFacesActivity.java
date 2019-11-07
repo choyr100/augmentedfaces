@@ -217,13 +217,13 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
 
                             //node.setFaceMeshTexture(faceMeshTexture);
-                            node.setLocalScale(new Vector3(0.27f,0.27f,0.27f));
+                            node.setLocalScale(new Vector3(0.28f,0.28f,0.28f));
                             node.setName("node");
 
                             TransformableNode headNode = new TransformableNode(arFragment.getTransformationSystem());
                             headNode.setParent(node);
 
-                            headRegionsRenderable.setMaterial(faceMeshOccluderMaterial);
+                            //headRegionsRenderable.setMaterial(faceMeshOccluderMaterial);
                             headRegionsRenderable.setRenderPriority(FACE_MESH_RENDER_PRIORITY);
                             headNode.setRenderable(headRegionsRenderable);
 
