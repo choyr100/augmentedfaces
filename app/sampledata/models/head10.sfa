@@ -1,24 +1,24 @@
 {
   materials: [
     {
-      name: 'default',
+      name: 'Material__26',
       parameters: [
         {
-          baseColor: null,
+          baseColor: 'face_mesh_texture',
         },
         {
           baseColorTint: [
-            0.59999999999999998,
-            0.59999999999999998,
-            0.59999999999999998,
+            0.5,
+            0.5,
+            0.5,
             1,
           ],
         },
         {
-          metallic: 0,
+          metallic: 1,
         },
         {
-          roughness: 1,
+          roughness: 0.25,
         },
         {
           opacity: null,
@@ -34,10 +34,20 @@
       'Orientation',
     ],
     collision: {},
-    file: 'sampledata/models/base.obj',
-    name: 'base',
+    file: 'sampledata/models/head10.obj',
+    name: 'head10',
     recenter: 'root',
     scale: 0.045025999999999997,
   },
+  samplers: [
+    {
+      file: 'C:\\Users\\choyr\\Desktop\\face_mesh_texture.png',
+      name: 'face_mesh_texture',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'C:\\Users\\choyr\\Desktop\\face_mesh_texture.psd',
+    },
+  ],
   version: '0.54:2',
 }

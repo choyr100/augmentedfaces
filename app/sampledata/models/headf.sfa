@@ -1,23 +1,18 @@
 {
-  animations: [
-    {
-      path: 'sampledata/models/based2.fbx',
-    },
-  ],
   materials: [
     {
-      name: 'default',
+      name: 'Material #27',
       parameters: [
         {
           baseColor: [
-            0.80000000000000004,
-            0.80000000000000004,
-            0.80000000000000004,
+            1,
+            1,
+            1,
             1,
           ],
         },
         {
-          baseColorMap: null,
+          baseColorMap: 'graduationcap',
         },
         {
           normalMap: null,
@@ -41,7 +36,7 @@
           opacity: null,
         },
       ],
-      source: 'sampledata/models/fox_face_material.mat',
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
     },
   ],
   model: {
@@ -53,10 +48,16 @@
       'BoneWeights',
     ],
     collision: {},
-    file: 'sampledata/models/based2.fbx',
-    name: 'based2',
+    file: 'sampledata/models/headf.FBX',
+    name: 'headf',
     recenter: 'root',
-    scale: 0.045025999999999997,
   },
+  samplers: [
+    {
+      file: 'sampledata\\models\\graduationcap.jpg',
+      name: 'graduationcap',
+      pipeline_name: '..\\Documents\\augmentedfaces\\app\\sampledata\\models\\graduationcap.jpg',
+    },
+  ],
   version: '0.54:2',
 }

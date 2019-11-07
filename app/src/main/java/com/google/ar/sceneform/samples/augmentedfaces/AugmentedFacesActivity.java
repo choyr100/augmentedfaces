@@ -68,6 +68,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
     private ModelRenderable faceRegionsRenderable;
     private Texture faceMeshTexture;
+    private Texture meshTexture;
 
     private TextView textView;
 
@@ -111,7 +112,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             modelRenderable.setShadowCaster(false);
                             modelRenderable.setShadowReceiver(false);
                         });
-        ModelRenderable.builder().setSource(this, R.raw.base)
+        ModelRenderable.builder().setSource(this, R.raw.head)
                 .build()
                 .thenAccept(
                         modelRenderable -> {
@@ -131,6 +132,11 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                 .setSource(this, R.drawable.face_mesh_texture)
                 .build()
                 .thenAccept(texture -> faceMeshTexture = texture);
+
+        Texture.builder()
+                .setSource(this, R.drawable.mesh_texture)
+                .build()
+                .thenAccept(texture -> meshTexture = texture);
 
         ArSceneView sceneView = arFragment.getArSceneView();
 
@@ -166,34 +172,40 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
-                            faceNode.setLocalScale(new Vector3(0.25f, 0.25f, 0.25f));
+                            faceNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
 
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
 
-                            node.setFaceMeshTexture(faceMeshTexture);
-                            //node.setRenderable(headRegionsRenderable);
-                            //node.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
-                            node.setName("head");
+                            //node.setFaceMeshTexture(faceMeshTexture);
+                            node.setLocalScale(new Vector3(0.3f,0.3f,0.3f));
+                            node.setName("node");
+
+                            TransformableNode headNode = new TransformableNode(arFragment.getTransformationSystem());
+                            headNode.setParent(node);
+                            headNode.setRenderable(headRegionsRenderable);
+                            headNode.setLocalPosition(new Vector3(0f, -1.f, -0.3f));
 
                             TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
 
                             Pose nosePose = face.getRegionPose(AugmentedFace.RegionType.NOSE_TIP);
-                            TransformableNode node1 = new TransformableNode(arFragment.getTransformationSystem());
+                            nosePose.getTranslation();
 
 
                             capNode.setParent(faceNode);
 
                             capNode.setRenderable(graduationCapRegionsRenderable);
 
-                            capNode.setLocalPosition(new Vector3(0f,-0.25f,-0.5f));
+                            capNode.setLocalPosition(new Vector3(0f,-0.4f,-0.3f));
                             capNode.setLocalRotation(rotationQuaternionY);
                             capNode.setName("cap");
 
-                            AugmentedFaceNode headnode = new AugmentedFaceNode(face);
-                            headnode.setParent(scene);
-                            headnode.setRenderable(headRegionsRenderable);
-                            headnode.setLocalScale(new Vector3(0.2f,0.2f,0.2f));
+
+
+//                            AugmentedFaceNode headNode = new AugmentedFaceNode(face);
+//                            headNode.setParent(scene);
+//                            headNode.setRenderable(headRegionsRenderable);
+//                            headNode.setLocalScale(new Vector3(0.2f, 0.2f, 0.2f));
 
 //                            MaterialFactory.makeTransparentWithColor(getApplicationContext(), new Color(244, 244, 244))
 //                                    .thenAccept(
@@ -236,6 +248,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             //faceNodeMap.put(faceNode, face);
                             //faceNodeMap.put(capNode, face);
                             faceNodeMap.put(node, face);
+                            //faceNodeMap.put(headNode, face);
                         }
                     }
 

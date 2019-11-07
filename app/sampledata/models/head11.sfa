@@ -1,0 +1,53 @@
+{
+  materials: [
+    {
+      name: 'Material__27',
+      parameters: [
+        {
+          baseColor: 'graduationcap',
+        },
+        {
+          baseColorTint: [
+            0.58799999999999997,
+            0.58799999999999997,
+            0.58799999999999997,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.408248,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/models/head11.obj',
+    name: 'head11',
+    recenter: 'root',
+    scale: 0.045025999999999997,
+  },
+  samplers: [
+    {
+      file: 'C:\\Users\\choyr\\Documents\\augmentedfaces\\app\\sampledata\\models\\graduationcap.jpg',
+      name: 'graduationcap',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'C:\\Users\\choyr\\Documents\\augmentedfaces\\app\\sampledata\\models\\graduationcap.jpg',
+    },
+  ],
+  version: '0.54:2',
+}
