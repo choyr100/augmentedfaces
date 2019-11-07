@@ -210,24 +210,24 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
-                            faceNode.setLocalScale(new Vector3(0.3f, 0.3f, 0.3f));
+                            faceNode.setLocalScale(new Vector3(0.25f, 0.25f, 0.25f));
 
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
 
 
                             //node.setFaceMeshTexture(faceMeshTexture);
-                            node.setLocalScale(new Vector3(0.3f,0.3f,0.3f));
+                            node.setLocalScale(new Vector3(0.27f,0.27f,0.27f));
                             node.setName("node");
 
                             TransformableNode headNode = new TransformableNode(arFragment.getTransformationSystem());
                             headNode.setParent(node);
 
-                            //headRegionsRenderable.setMaterial(faceMeshOccluderMaterial);
+                            headRegionsRenderable.setMaterial(faceMeshOccluderMaterial);
                             headRegionsRenderable.setRenderPriority(FACE_MESH_RENDER_PRIORITY);
                             headNode.setRenderable(headRegionsRenderable);
 
-                            headNode.setLocalPosition(new Vector3(0f, -1.f, -0.3f));
+                            headNode.setLocalPosition(new Vector3(0f, -1.0f, -0.3f));
 
                             TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
 
@@ -239,7 +239,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
                             capNode.setRenderable(graduationCapRegionsRenderable);
 
-                            capNode.setLocalPosition(new Vector3(0f,-0.4f,-0.3f));
+                            capNode.setLocalPosition(new Vector3(0f,-0.3f,-0.3f));
                             capNode.setLocalRotation(rotationQuaternionY);
                             capNode.setName("cap");
 
