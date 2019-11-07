@@ -116,8 +116,8 @@ public class AugmentedFacesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_face_mesh);
         arFragment = (FaceArFragment) getSupportFragmentManager().findFragmentById(R.id.face_fragment);
 
-        textView = (TextView) findViewById(R.id.textview1);
-        textView.setText("hello");
+//        textView = (TextView) findViewById(R.id.textview1);
+//        textView.setText("hello");
         isCreate = false;
         // Load the face regions renderable.
         // This is a skinned model that renders 3D objects mapped to the regions of the augmented face.
@@ -210,14 +210,14 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         if (!faceNodeMap.containsValue(face)) {
                             AugmentedFaceNode faceNode = new AugmentedFaceNode(face);
                             faceNode.setParent(scene);
-                            faceNode.setLocalScale(new Vector3(0.25f, 0.25f, 0.25f));
+                            faceNode.setLocalScale(new Vector3(0.22f, 0.22f, 0.22f));
 
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
 
 
                             //node.setFaceMeshTexture(faceMeshTexture);
-                            node.setLocalScale(new Vector3(0.28f,0.28f,0.28f));
+                            node.setLocalScale(new Vector3(0.29f,0.29f,0.29f));
                             node.setName("node");
 
                             TransformableNode headNode = new TransformableNode(arFragment.getTransformationSystem());
@@ -227,7 +227,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             headRegionsRenderable.setRenderPriority(FACE_MESH_RENDER_PRIORITY);
                             headNode.setRenderable(headRegionsRenderable);
 
-                            headNode.setLocalPosition(new Vector3(0f, -1.0f, -0.3f));
+                            headNode.setLocalPosition(new Vector3(0f, -0.95f, -0.3f));
 
                             TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
 
@@ -239,7 +239,7 @@ public class AugmentedFacesActivity extends AppCompatActivity {
 
                             capNode.setRenderable(graduationCapRegionsRenderable);
 
-                            capNode.setLocalPosition(new Vector3(0f,-0.3f,-0.3f));
+                            capNode.setLocalPosition(new Vector3(0f,-0.21f,-0.3f));
                             capNode.setLocalRotation(rotationQuaternionY);
                             capNode.setName("cap");
 
