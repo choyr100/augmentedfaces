@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -38,22 +39,28 @@ import com.google.ar.sceneform.collision.Box;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.Material;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
+import com.google.ar.sceneform.rendering.RenderableDefinition;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.rendering.Texture;
 import com.google.ar.sceneform.ux.AugmentedFaceNode;
+import com.google.ar.sceneform.rendering.Vertex;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 
 /**
  * This is an example activity that uses the Sceneform UX package to make common Augmented Faces
@@ -80,6 +87,20 @@ public class AugmentedFacesActivity extends AppCompatActivity {
     private boolean isCreate;
 
     private Quaternion rotationQuaternionY;
+
+    private final ArrayList<Vertex> vertices = new ArrayList<>();
+    private final ArrayList<RenderableDefinition.Submesh> submeshes = new ArrayList<>();
+    private final RenderableDefinition faceMeshDefinition;
+
+    private Material faceMeshOccluderMaterial;
+
+    private static final int FACE_MESH_RENDER_PRIORITY =
+            Math.max(Renderable.RENDER_PRIORITY_FIRST, Renderable.RENDER_PRIORITY_DEFAULT - 1);
+
+    public AugmentedFacesActivity() {
+        faceMeshDefinition =
+                RenderableDefinition.builder().setVertices(vertices).setSubmeshes(submeshes).build();
+    }
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -117,6 +138,8 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                 .thenAccept(
                         modelRenderable -> {
                             headRegionsRenderable = modelRenderable;
+                            modelRenderable.setShadowCaster(false);
+                            modelRenderable.setShadowReceiver(false);
                         }
                 );
         ModelRenderable.builder().setSource(this, R.raw.graduationcap)
@@ -124,8 +147,23 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                 .thenAccept(
                         modelRenderable -> {
                             graduationCapRegionsRenderable = modelRenderable;
+                            modelRenderable.setShadowCaster(false);
+                            modelRenderable.setShadowReceiver(false);
                         }
                 );
+        ModelRenderable.builder()
+                .setSource(this, R.raw.sceneform_face_mesh_occluder)
+                .build()
+                .handle(
+                        (renderable, throwable) -> {
+                            if (throwable != null) {
+                                Log.e(TAG, "Unable to load face mesh material.", throwable);
+                                return false;
+                            }
+
+                            faceMeshOccluderMaterial = renderable.getMaterial();
+                            return true;
+                        });
 
         // Load the face mesh texture.
         Texture.builder()
@@ -177,13 +215,18 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                             AugmentedFaceNode node = new AugmentedFaceNode(face);
                             node.setParent(scene);
 
+
                             //node.setFaceMeshTexture(faceMeshTexture);
                             node.setLocalScale(new Vector3(0.3f,0.3f,0.3f));
                             node.setName("node");
 
                             TransformableNode headNode = new TransformableNode(arFragment.getTransformationSystem());
                             headNode.setParent(node);
+
+                            //headRegionsRenderable.setMaterial(faceMeshOccluderMaterial);
+                            headRegionsRenderable.setRenderPriority(FACE_MESH_RENDER_PRIORITY);
                             headNode.setRenderable(headRegionsRenderable);
+
                             headNode.setLocalPosition(new Vector3(0f, -1.f, -0.3f));
 
                             TransformableNode capNode = new TransformableNode(arFragment.getTransformationSystem());
@@ -277,8 +320,9 @@ public class AugmentedFacesActivity extends AppCompatActivity {
                         else if(face.getTrackingState() == TrackingState.TRACKING){
                             AugmentedFaceNode faceNode = entry.getKey();
                             Log.i("TRACKING",faceNode.getName());
-                            if(faceNode.getName().equals("cap")){
-                                Log.i("cap",faceNode.getName());
+                            if(faceNode.getName().equals("node")){
+
+                                //Log.i("cap",faceNode.getName());
                                 //faceNode.setWorldPosition(new Vector3(0f,-1000f,0f));
                             }
                         }
@@ -314,5 +358,13 @@ public class AugmentedFacesActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private static <T> T checkNotNull(@Nullable T reference) {
+        if (reference == null) {
+            throw new NullPointerException();
+        }
+
+        return reference;
     }
 }
